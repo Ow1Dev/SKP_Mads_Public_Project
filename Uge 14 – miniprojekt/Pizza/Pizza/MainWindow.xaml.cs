@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Pizza.Mordel;
+using Pizza.Windows;
 
 namespace Pizza
 {
@@ -27,7 +29,16 @@ namespace Pizza
                 Name = "Pizza",
                 Items = new List<PMenu>
                 {
-                    new PMenu("test 1")
+                    new PMenu("test 1"),
+                    new PMenu("test 2"),
+                    new PMenu("test 3"),
+                    new PMenu("test 4"),
+                    new PMenu("test 5"),
+                    new PMenu("test 6"),
+                    new PMenu("test 7"),
+                    new PMenu("test 8"),
+                    new PMenu("test 9"),
+                    new PMenu("test 0")
                 }
 
             },
@@ -36,7 +47,7 @@ namespace Pizza
                 Name = "Drinks",
                 Items = new List<PMenu>
                 {
-                    new PMenu("test 2")
+                    new PMenu("test 2"),
                 }
 
             }
@@ -46,10 +57,31 @@ namespace Pizza
         {
             InitializeComponent();
 
+            //puts products in itemSource and set selected to the first one
             CatergoryList.ItemsSource = catergories;
             CatergoryList.SelectedValue = 0;
 
             ChangeGridView(catergories[0].Items);
+        }
+
+        private void ChangeGridView(List<PMenu> items)
+        {
+            //Clear Menubar
+            MenuBar.Children.Clear();
+
+            //Get every item and add a label
+            foreach (var item in items)
+            {
+                //Crate a Label
+                var label = new PLabel() { Margin = new Thickness(10), Width = 50, Height = 50, Background = Brushes.Yellow, Content = item.Name, Cursor = Cursors.Hand };
+
+                //Puts the item in to label
+                label.Menu = item;
+
+                //Add event and show the label
+                label.MouseLeftButtonDown += Label_MouseLeftButtonDown;
+                MenuBar.Children.Add(label);
+            }
         }
 
         private void CatergoryList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -59,34 +91,14 @@ namespace Pizza
             ChangeGridView(items);
         }
 
-        private void ChangeGridView(List<PMenu> items)
+        private void Label_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            MenuBar.Children.Clear();
-
-            foreach (var item in items)
-            {
-                MenuBar.Children.Add(new Label() { Margin = new Thickness(10), Width = 50, Height = 50, Background = Brushes.Yellow, Content = item.Name });
-            }
+            new ShowProduct().Show(((PLabel)sender).Menu);
         }
     }
-
-    public class PCatergory
+    
+    public class PLabel : Label
     {
-        public string Name { get; set; }
-        public List<PMenu> Items { get; set; } = new List<PMenu>();
-
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
-
-    public class PMenu
-    {
-        public string Name { get; set; }
-        public PMenu(string name)
-        {
-            Name = name;
-        }
+        public PMenu Menu { get; set; }
     }
 }
